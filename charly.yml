@@ -1,0 +1,50 @@
+version: 2026.240.1943
+cstream-desktop:
+    candy:
+        version: 2026.242.0400
+        description: |
+            The cstream desktop metalayer: the transport spine plus the nested
+            compositor, composed as one candy so a box gets a streamed Hyprland
+            desktop by naming a single name.
+
+            It carries no plan of its own beyond the composition assertion below.
+            That is the point -- a metalayer that also installed things would give
+            a consumer two places to look for the same behaviour, and the two
+            members already own theirs: pod-cstream the parent/gateway/PAM stack
+            and its streaming gates, pod-hyprland the nested compositor, its Lua
+            config and the file-capability strip.
+
+            Composition ORDER is load-bearing and is why this exists as a candy
+            rather than as two lines in every consumer. Hyprland has no headless
+            mode and Aquamarine's DRM backend needs a KMS card node a rootless pod
+            never gets, so it can only ever run nested in a parent that advertises
+            zwp_linux_dmabuf_v1 and binds xdg_wm_base at version 6. pod-cstream
+            supplies exactly that parent. Composing pod-hyprland WITHOUT it yields
+            an image that builds cleanly and dies at start with
+            "CBackend::create() failed!" -- a failure that names the compositor
+            rather than the missing parent.
+        candy:
+            # COMPOSITION, not `require:`. A metalayer's members are what it IS, so
+            # they are `candy:` entries -- the same field pod-selkies-desktop uses.
+            # Authored as `require:` the candy has no install content of its own and
+            # charly rejects it outright ("must have at least one install file ...
+            # or a candy: field"), which is the schema saying the same thing.
+            #
+            # Pinned refs, not bare names: both became standalone repos in the candy
+            # cutover, so a bare name resolves only inside a project that happens to
+            # have them in scan range.
+            - '@github.com/opencharly/pod-cstream:v2026.242.0352'
+            - '@github.com/opencharly/pod-hyprland:v2026.241.1545'
+        plan:
+            - check: both halves of the desktop are present -- the parent that streams and the compositor that draws
+              id: cstream-desktop-composed
+              exit_status: 0
+              command: |
+                # The metalayer's ONLY claim is that composing it yields both
+                # halves, so that is what it asserts -- one binary from each member,
+                # chosen because each is the artifact its member exists to install.
+                test -x /usr/local/bin/cstream-parent || { echo "MISSING: the Wayland parent (pod-cstream)"; exit 1; }
+                test -x /usr/bin/Hyprland || { echo "MISSING: the nested compositor (pod-hyprland)"; exit 1; }
+                echo CSTREAM-DESKTOP-COMPOSED
+              stdout:
+                - contains: CSTREAM-DESKTOP-COMPOSED
