@@ -1,7 +1,7 @@
 version: 2026.240.1943
 cstream-desktop:
     candy:
-        version: 2026.243.0604
+        version: 2026.243.1022
         description: |
             The cstream desktop metalayer: the transport spine plus the nested
             compositor, composed as one candy so a box gets a streamed Hyprland
@@ -34,7 +34,7 @@ cstream-desktop:
             # cutover, so a bare name resolves only inside a project that happens to
             # have them in scan range.
             - '@github.com/opencharly/pod-cstream:v2026.243.0310'
-            - '@github.com/opencharly/pod-hyprland:v2026.243.0603'
+            - '@github.com/opencharly/pod-hyprland:v2026.243.1021'
         plan:
             - check: both halves of the desktop are present -- the parent that streams and the compositor that draws
               id: cstream-desktop-composed
