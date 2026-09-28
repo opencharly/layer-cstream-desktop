@@ -1,5 +1,7 @@
+version: 2026.240.1943
 cstream-desktop:
     candy:
+        version: 2026.243.1417
         description: |
             The cstream desktop metalayer: the transport spine plus the nested
             compositor, composed as one candy so a box gets a streamed Hyprland
